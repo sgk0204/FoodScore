@@ -397,13 +397,26 @@ async def test_reaper_fails_stuck_and_expires_stale(services):
 
 
 async def test_concurrent_first_scans_of_same_barcode_make_one_llm_call(
-    client, services, extractor
+    client, services, extractor, monkeypatch
 ):
-    # edge case 41: Redis SET NX lock + re-check of the cache inside the worker
+    # edge case 41: Redis SET NX lock + re-check of the cache inside the worker.
+    # Hold the first extraction open until both scans are queued; otherwise a fast machine can
+    # finish job A before request B arrives, and B (correctly) becomes a cache hit.
+    import asyncio
+
+    gate = asyncio.Event()
+    real_extract = extractor.extract
+
+    async def held_extract(images, prompt_version):
+        await gate.wait()
+        return await real_extract(images, prompt_version)
+
+    monkeypatch.setattr(extractor, "extract", held_extract)
     headers = await register(client)
     a = await post_scan(client, headers, seed=1, barcode=BARCODE)
     b = await post_scan(client, headers, seed=2, barcode=BARCODE)
     assert a.status_code == b.status_code == 202
+    gate.set()
     await drain(services)
     assert extractor.calls == 1
     for r in (a, b):

@@ -30,6 +30,9 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   poweredByHeader: false,
   reactStrictMode: true,
+  // Next 16 `next dev` otherwise writes an AGENTS.md for AI tools; this repo documents itself
+  // in /CLAUDE.md instead, and the dev server should not modify tracked files.
+  agentRules: false,
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${BACKEND_URL}/api/:path*` }];
   },

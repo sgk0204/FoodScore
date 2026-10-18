@@ -179,11 +179,22 @@ the model, prompt or schema. Unit tests: `tests/unit/test_extraction_gemini.py`.
   removing family revocation.
 - On Windows, a stray `package-lock.json` in a parent directory confuses Next's workspace root;
   `outputFileTracingRoot` is pinned in `next.config.ts` for that reason.
+- **Next 16 has breaking changes vs older Next.js** — check the docs bundled at
+  `frontend/node_modules/next/dist/docs/` before using an unfamiliar API. `agentRules: false` in
+  `next.config.ts` stops `next dev` writing its own `AGENTS.md` (this file is the agent guide).
+- **`prettier-plugin-tailwindcss` ≥ 0.8 assumes Tailwind 4** unless told otherwise;
+  `.prettierrc.json` sets `"tailwindConfig": "./tailwind.config.ts"` so it uses the v3 path.
+  Remove that line if the project moves to Tailwind 4.
+- **Test tooling moves as a set:** Vitest 5 + `@vitejs/plugin-react` 6 need Vite 8 (pinned in
+  devDependencies). Upgrade them together.
+- **Async tests that check "concurrent" behaviour must force the overlap** (e.g. hold the fake
+  extractor on an `asyncio.Event`) — on a fast runner the first background job can finish
+  before the second request arrives.
 - **Next 16 builds with Turbopack:** built CSS lands in `.next/static/chunks/`, not
   `static/css/` — the CI purge guard greps all of `.next/static`. `next lint` no longer exists;
   linting is plain `eslint .` with eslint-config-next's native flat configs.
 - **ESLint stays on 9** until `eslint-plugin-react`, `jsx-a11y` and `import` (pulled in by
-  eslint-config-next) support ESLint 10; Dependabot is told to skip ESLint majors.
+  eslint-config-next) support ESLint 10.
 - CI runs `npm audit --audit-level=high`. If you add npm `overrides`, regenerate
   `package-lock.json` (delete it and `node_modules`) or the old nested copy stays.
 - **Managed Postgres URLs** (`postgres://…?sslmode=require&channel_binding=require`) are
@@ -214,3 +225,10 @@ variable `DEPLOY_VIA_ACTIONS=true`; `eval.yml` runs only with `EVAL_ENABLED=true
 | Result screen | `frontend/app/result/[id]/page.tsx` |
 | Edge case → test map | `docs/edge-cases.md` |
 | Why things are the way they are | `docs/adr/` |
+
+## Dependency updates
+
+There is no Dependabot (removed on purpose). Update dependencies manually in a PR: keep coupled
+packages together (Next + eslint-config-next; Vitest + `@vitejs/plugin-react` + Vite), run
+`npm audit --audit-level=high` and `pip-audit`, and let CI verify. GitHub Actions should stay on
+Node 24 releases.
