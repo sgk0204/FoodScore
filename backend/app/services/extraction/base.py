@@ -119,6 +119,28 @@ def strict_json_schema(model: type[Extraction]) -> dict[str, Any]:
     return result
 
 
+def inline_refs(schema: dict[str, Any]) -> dict[str, Any]:
+    """Replace every local ``{"$ref": "#/$defs/X"}`` with the definition itself.
+
+    Some providers (Gemini) support only a subset of JSON Schema; a self-contained schema
+    without ``$defs`` is the most portable form. The Extraction schema has no recursion.
+    """
+    defs: dict[str, Any] = schema.get("$defs", {})
+
+    def walk(node: Any) -> Any:
+        if isinstance(node, dict):
+            ref = node.get("$ref")
+            if isinstance(ref, str) and ref.startswith("#/$defs/"):
+                return walk(defs[ref.split("/")[-1]])
+            return {k: walk(v) for k, v in node.items() if k != "$defs"}
+        if isinstance(node, list):
+            return [walk(v) for v in node]
+        return node
+
+    result: dict[str, Any] = walk(schema)
+    return result
+
+
 async def with_retries[T](
     fn: Callable[[], Awaitable[T]],
     *,

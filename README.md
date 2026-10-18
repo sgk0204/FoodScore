@@ -121,7 +121,8 @@ expiry rule). Migrations run on API start-up.
 
 **No API key needed to try it:** `.env.example` sets `LLM_PROVIDER=fake`, which replays recorded
 model responses (`FAKE_FIXTURE=auto` picks a different sample product per photo set). For real
-labels, set `LLM_PROVIDER=claude` and `ANTHROPIC_API_KEY=…` (or `gemini` + `GEMINI_API_KEY`).
+labels, set `LLM_PROVIDER=gemini` and `GEMINI_API_KEY=…` (or `claude` + `ANTHROPIC_API_KEY`).
+Check a key with one real call before deploying: `python backend/scripts/check_provider.py --provider gemini`.
 
 ### Option B — without Docker
 
@@ -162,7 +163,7 @@ provider in production). See [.env.example](.env.example) for every option.
 | `DATABASE_URL` | — (required) | `postgresql+asyncpg://…` or `sqlite+aiosqlite:///…` |
 | `REDIS_URL` | — (required) | Cache, job queue, rate limits, locks |
 | `JWT_SECRET` | — (required, ≥ 32 chars) | Signs access tokens |
-| `LLM_PROVIDER` / `LLM_FALLBACK_PROVIDER` | `fake` / none | `claude`, `gemini`, `fake` |
+| `LLM_PROVIDER` / `LLM_FALLBACK_PROVIDER` | `fake` / none | `gemini`, `claude`, `fake` (Render blueprint uses `gemini`) |
 | `CLAUDE_MODEL` / `CLAUDE_EFFORT` | `claude-opus-5-5` / `medium` | Claude extraction model and effort |
 | `GEMINI_MODEL` | `gemini-2.5-flash` | Gemini extraction model |
 | `PROMPT_VERSION` | `v1` | Selects `app/services/extraction/prompts/extraction_<v>.md`; stored on every scan |
@@ -207,7 +208,7 @@ and test in [docs/edge-cases.md](docs/edge-cases.md).
 ## Evaluation
 
 ```bash
-python -m eval.run --provider claude --prompt v1
+python -m eval.run --provider gemini --prompt v1
 ```
 
 Runs labelled photo sets through the real pipeline and reports per-field exact-match and
@@ -293,7 +294,7 @@ Full table and error catalogue: [docs/api.md](docs/api.md). Swagger UI at `/docs
 
 | Piece | Where | How |
 |---|---|---|
-| API + Postgres + Redis | Render | **New → Blueprint** reads [`render.yaml`](render.yaml); enter `ANTHROPIC_API_KEY` and `CORS_ORIGINS` |
+| API + Postgres + Redis | Render | **New → Blueprint** reads [`render.yaml`](render.yaml); enter `GEMINI_API_KEY` and `CORS_ORIGINS` |
 | Frontend | Vercel | Import the repo, root directory `frontend`, env `BACKEND_URL=<render API URL>` |
 
 Render deploys `main` only **after GitHub CI passes** (`autoDeployTrigger: checksPass`); Vercel

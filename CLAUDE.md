@@ -129,6 +129,17 @@ reaper (cron, every minute): PROCESSING > 2 min → FAILED; NEEDS_REVIEW > 24 h 
   signal: band labels are always shown as text. Prettier (with the Tailwind plugin) formats.
 - **Commits:** conventional commits (`feat:`, `fix:`, `docs:`, `test:`, `chore:`).
 
+## Gemini adapter (default in production)
+
+`app/services/extraction/gemini.py` (google-genai SDK, async `client.aio.models.generate_content`):
+one `Content(role="user")` with three JPEG parts + the instruction; `system_instruction`;
+`temperature=0`; `response_json_schema=inline_refs(strict_json_schema(Extraction))` (no
+`$defs` — Gemini supports a JSON Schema subset). Empty answers are classified by
+`prompt_feedback.block_reason` / `finish_reason` (SAFETY etc. → permanent, MAX_TOKENS →
+retryable), never treated as schema errors. Thinking tokens are billed as output and counted.
+`scripts/check_provider.py` makes one real call with a synthetic label — use it after changing
+the model, prompt or schema. Unit tests: `tests/unit/test_extraction_gemini.py`.
+
 ## Claude API usage (extraction adapter)
 
 `app/services/extraction/claude.py` uses the official `anthropic` SDK (1.x), async client,

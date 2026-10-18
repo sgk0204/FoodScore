@@ -16,7 +16,11 @@ ProviderName = Literal["claude", "gemini", "fake"]
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore", env_ignore_empty=True
+        # repo-root .env, then backend/.env (later wins), so commands work from either folder.
+        env_file=("../.env", ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+        env_ignore_empty=True,
     )
 
     # --- runtime ---

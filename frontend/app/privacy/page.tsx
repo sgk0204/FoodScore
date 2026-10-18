@@ -13,8 +13,9 @@ export default function PrivacyPage() {
       <ul className="list-disc space-y-1 pl-5">
         <li>
           <strong>Photos</strong> are resized and stripped of metadata (including GPS) on your
-          device, re-encoded again on our server, used only to read the label, and deleted as soon
-          as the label is read — always within 24 hours.
+          device, re-encoded again on our server, sent to our AI provider (Google Gemini or
+          Anthropic Claude) only to read the label, and deleted from our servers as soon as the
+          label is read — always within 24 hours.
         </li>
         <li>
           <strong>Account data</strong> is your email and a hashed password. We never store your

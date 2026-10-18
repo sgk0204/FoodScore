@@ -17,18 +17,41 @@ GitHub (main) ──CI passes──▶ Render: foodscore-api (Docker) ─┬─ 
 | GitHub | Code, CI | Free (public repo) |
 | [Render](https://render.com) | API, Postgres, Redis | Free tier works; free Postgres expires after 30 days |
 | [Vercel](https://vercel.com) | Frontend | Free (Hobby) |
-| [Anthropic Console](https://console.anthropic.com) | `ANTHROPIC_API_KEY` for label reading | Pay per scan |
+| [Google AI Studio](https://aistudio.google.com/apikey) | `GEMINI_API_KEY` for label reading (default provider) | Free tier available; pay per scan on the paid tier |
 
 > **No AI key yet?** You can deploy a demo that replays sample results: on Render set
 > `ENVIRONMENT=staging` and `LLM_PROVIDER=fake` (the app refuses `fake` in `production` on
-> purpose). Switch back once you have a key.
+> purpose). Switch back once you have a key. Claude works too: set `LLM_PROVIDER=claude` and
+> `ANTHROPIC_API_KEY` instead of the Gemini variables.
+
+> **Privacy — free vs paid Gemini tier.** On Google's *free* tier, prompts and images may be
+> used to improve Google's products. That's fine for testing with your own packets. Before real
+> users upload photos, enable billing on the Google Cloud project behind your key (the paid
+> tier doesn't use your data that way) — the app's privacy page promises photos are used only
+> to read the label.
+
+## 0. Test your key locally first (2 minutes)
+
+This makes **one** real API call with a synthetic label and checks the answer, so you find key
+or model problems before deploying. In the repo root `.env` file (git-ignored — never commit it)
+add `GEMINI_API_KEY=<your key>`, then:
+
+```bash
+cd backend
+.venv/Scripts/python scripts/check_provider.py --provider gemini   # Windows
+# python scripts/check_provider.py --provider gemini              # macOS / Linux
+```
+
+`RESULT: PASS` means it read every value and scored the biscuit 39 (Bad). If it says the model
+was not found, Google has renamed or retired it: pick a current Flash model from AI Studio and
+pass it with `--model`, then use the same name for `GEMINI_MODEL` on Render.
 
 ## 1. Backend on Render
 
 1. Render dashboard → **New → Blueprint** → connect GitHub → pick `sgk0204/FoodScore`.
 2. Render reads `render.yaml` and proposes `foodscore-api`, `foodscore-db` and
    `foodscore-redis`. Fill in the secrets it asks for:
-   - `ANTHROPIC_API_KEY` — your key
+   - `GEMINI_API_KEY` — your key
    - `CORS_ORIGINS` — leave as `https://example.com` for now; set it to your Vercel URL in step 3
    - `SENTRY_DSN` — optional; leave empty
 3. **Apply.** The first build takes a few minutes. Migrations run automatically on start-up
@@ -63,7 +86,7 @@ stays first-party, which is why `SameSite=Strict` works across two hosting provi
   `security` checks to pass and require pull requests. Because Render deploys only after checks
   pass, a red CI run never reaches users.
 - **Secrets:** none are needed for CI. Optional:
-  - Nightly real-provider eval (`eval.yml`): secret `ANTHROPIC_API_KEY`, secret
+  - Nightly real-provider eval (`eval.yml`): secret `GEMINI_API_KEY`, secret
     `EVAL_DATASET_URL` (a zip of your labelled photos), and repository variable
     `EVAL_ENABLED=true`.
   - Actions-driven staging → production with manual approval (`deploy.yml`): see the header
@@ -72,7 +95,7 @@ stays first-party, which is why `SameSite=Strict` works across two hosting provi
 Set secrets from a terminal without pasting them anywhere:
 
 ```bash
-gh secret set ANTHROPIC_API_KEY --repo sgk0204/FoodScore     # prompts for the value
+gh secret set GEMINI_API_KEY --repo sgk0204/FoodScore        # prompts for the value
 gh variable set EVAL_ENABLED --body true --repo sgk0204/FoodScore
 ```
 
@@ -85,7 +108,7 @@ for a portfolio demo. To match the guide's architecture (independent scaling, AR
    API token (S3 access key and secret).
 2. In `render.yaml`, uncomment the `foodscore-worker` block (a Render "starter" worker is paid).
 3. On both API and worker set `JOB_MODE=arq`, `STORAGE_BACKEND=s3`, `S3_ENDPOINT_URL`,
-   `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, plus the same `ANTHROPIC_API_KEY`,
+   `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, plus the same `GEMINI_API_KEY`,
    `JWT_SECRET`, `DATABASE_URL` and `REDIS_URL`.
 4. Upgrade `foodscore-db` to a paid plan so data doesn't expire.
 
@@ -108,5 +131,5 @@ Any Docker host works (Railway, Fly.io, Google Cloud Run, a VM). Requirements:
 | `/ready` shows `redis: error` | Check `REDIS_URL`. Scanning still works (fail-open), but the cache and shared rate limits don't |
 | Frontend shows "Couldn't load" / 404 on `/api/...` | `BACKEND_URL` is wrong or was set after the build — fix it and redeploy on Vercel |
 | Signed out on every reload | The site must be served over HTTPS (Secure cookie), and requests must go through the `/api` proxy |
-| Scans fail with "temporarily unavailable" | `ANTHROPIC_API_KEY` is invalid or out of credit — check the Render logs for `extraction_failed` |
+| Scans fail with "temporarily unavailable" | `GEMINI_API_KEY` is invalid, over its free-tier rate limit, or `GEMINI_MODEL` was retired — check the Render logs for `extraction_failed` and run `scripts/check_provider.py` locally |
 | First request is slow | Free Render services sleep when idle; upgrade the plan to keep the API warm |

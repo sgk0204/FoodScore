@@ -40,10 +40,10 @@ services:
       - key: STORAGE_BACKEND
         value: local
       - key: LLM_PROVIDER
-        value: claude
-      - key: CLAUDE_MODEL
-        value: claude-opus-5-5
-      - key: ANTHROPIC_API_KEY
+        value: gemini # or claude (then set ANTHROPIC_API_KEY instead)
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: GEMINI_API_KEY
         sync: false
       - key: CORS_ORIGINS # your Vercel URL, e.g. https://foodscore.vercel.app
         sync: false
