@@ -4,7 +4,7 @@ Request shape:
 - One user turn holding the three images + the instruction; the system prompt goes in
   ``system_instruction``. ``response_json_schema`` constrains the answer to the Extraction
   schema (with ``$ref``s inlined — Gemini supports only a subset of JSON Schema).
-- Temperature 0. SDK-level retries are not used; retries/backoff live in ``base.py``.
+- Temperature 0 only on 2.x models (Gemini 3 should keep its default). SDK-level retries are not used; retries/backoff live in ``base.py``.
 - Blocked or truncated answers are classified by ``finish_reason`` / ``prompt_feedback``
   instead of being mistaken for schema errors.
 - The schema-repair round is a proper multi-turn exchange: the model sees its own previous
@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 import time
-from typing import Any
+from typing import Any, Literal
 
 import httpx
 import structlog
@@ -40,10 +40,14 @@ log = structlog.get_logger(__name__)
 
 # USD per million tokens (input, output). Thinking tokens are billed as output.
 PRICES_PER_MTOK: dict[str, tuple[float, float]] = {
+    "gemini-3.8-flash": (0.75, 3.75),  # rises to (1.50, 7.50) on 2027-01-01
+    "gemini-3.5-flash-lite": (0.30, 2.50),
     "gemini-2.5-flash": (0.30, 2.50),
     "gemini-2.5-flash-lite": (0.10, 0.40),
     "gemini-2.5-pro": (1.25, 10.0),
 }
+
+ThinkingLevel = Literal["minimal", "low", "medium", "high"]
 
 _RETRYABLE_FINISH = {"MAX_TOKENS"}  # transient: worth another attempt
 
@@ -55,17 +59,21 @@ class GeminiExtractor:
         self,
         api_key: str,
         *,
-        model: str = "gemini-2.5-flash",
+        model: str = "gemini-3.8-flash",
         timeout_s: float = 60.0,
         max_attempts: int = 3,
-        thinking_budget: int | None = 0,
+        thinking_level: ThinkingLevel | None = "low",
         client: Any | None = None,
     ) -> None:
         self.model = model
-        # Transcribing a label needs no step-by-step reasoning; thinking only adds latency and
-        # cost. 0 disables it on Flash models. None keeps the model default (Pro models cannot
-        # disable thinking).
-        self.thinking_budget = thinking_budget
+        # Transcribing a label needs little reasoning, so use the lowest thinking level the model
+        # allows: faster and cheaper. Gemini 3 models cannot switch thinking off, and the lowest
+        # level differs per model (gemini-3.8-flash: "low"; flash-lite: "minimal"). None keeps the
+        # model's default.
+        self.thinking_level = thinking_level
+        # Gemini 3+: Google strongly recommends the default temperature (1.0); lower values can
+        # cause looping (truncated JSON). Older 2.x models are most consistent at 0.
+        self.temperature: float | None = 0 if model.startswith(("gemini-2.", "gemini-1.")) else None
         self.timeout_s = timeout_s
         self.max_attempts = max_attempts
         self._client = client or genai.Client(api_key=api_key)
@@ -74,13 +82,13 @@ class GeminiExtractor:
     async def _call(self, system: str, contents: list[types.ContentUnion]) -> Any:
         config = types.GenerateContentConfig(
             system_instruction=system,
-            temperature=0,
+            temperature=self.temperature,
             max_output_tokens=16000,
             response_mime_type="application/json",
             response_json_schema=self._schema,
             thinking_config=(
-                types.ThinkingConfig(thinking_budget=self.thinking_budget)
-                if self.thinking_budget is not None
+                types.ThinkingConfig(thinking_level=self.thinking_level.upper())
+                if self.thinking_level is not None
                 else None
             ),
         )

@@ -85,10 +85,12 @@ class Settings(BaseSettings):
     claude_effort: Literal["low", "medium", "high", "xhigh", "max"] = "medium"
     claude_server_fallback: bool = True
     gemini_api_key: SecretStr | None = None
-    gemini_model: str = "gemini-2.5-flash"
-    # 0 = no thinking (fast, cheap; fine for transcription). Use -1 for dynamic, or leave a
-    # positive budget for Pro models, which cannot disable thinking.
-    gemini_thinking_budget: int | None = 0
+    # Current stable Flash model. gemini-2.5-flash is only served to keys that used it before,
+    # so new keys get NOT_FOUND — see docs/deployment.md → Troubleshooting.
+    gemini_model: str = "gemini-3.8-flash"
+    # Lowest level the model supports keeps reads fast and cheap. gemini-3.8-flash: low|medium|
+    # high; flash-lite models also accept "minimal".
+    gemini_thinking_level: Literal["minimal", "low", "medium", "high"] | None = "low"
     fake_fixture: str = "chocolate_biscuit"
 
     # --- observability ---

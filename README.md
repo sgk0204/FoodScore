@@ -165,7 +165,7 @@ provider in production). See [.env.example](.env.example) for every option.
 | `JWT_SECRET` | — (required, ≥ 32 chars) | Signs access tokens |
 | `LLM_PROVIDER` / `LLM_FALLBACK_PROVIDER` | `fake` / none | `gemini`, `claude`, `fake` (Render blueprint uses `gemini`) |
 | `CLAUDE_MODEL` / `CLAUDE_EFFORT` | `claude-opus-5-5` / `medium` | Claude extraction model and effort |
-| `GEMINI_MODEL` | `gemini-2.5-flash` | Gemini extraction model |
+| `GEMINI_MODEL` | `gemini-3.8-flash` | Gemini extraction model (current stable Flash) |
 | `PROMPT_VERSION` | `v1` | Selects `app/services/extraction/prompts/extraction_<v>.md`; stored on every scan |
 | `REVIEW_CONFIDENCE_THRESHOLD` | `0.7` | Below this a field is flagged for review |
 | `USER_DAILY_SCAN_QUOTA` / `GUEST_DAILY_SCAN_QUOTA` | `20` / `3` | New (uncached) scans per day |
