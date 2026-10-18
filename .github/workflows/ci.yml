@@ -86,7 +86,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
         env: { CI: "true" }
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with: { name: playwright-report, path: frontend/playwright-report }
       - run: npm audit --audit-level=high --omit=dev
