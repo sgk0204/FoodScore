@@ -125,6 +125,21 @@ Any Docker host works (Railway, Fly.io, Google Cloud Run, a VM). Requirements:
 
 ## Troubleshooting
 
+### Failed scans show an error code
+
+When a scan fails because of the AI provider, the result screen shows a short code. It contains
+no secrets. The full provider message is in the Render logs (search for `extraction_failed`).
+
+| Code | Meaning | Fix |
+|---|---|---|
+| `gemini:PERMISSION_DENIED` / `gemini:UNAUTHENTICATED` | Key rejected | Check `GEMINI_API_KEY` on Render (no spaces or quotes), and that the Generative Language API is enabled for the key's project |
+| `gemini:NOT_FOUND` | Model name unknown or retired | Set `GEMINI_MODEL` to a current Flash model from AI Studio; test it with `scripts/check_provider.py --model …` |
+| `gemini:INVALID_ARGUMENT` | Google rejected the request format | Run `scripts/check_provider.py` locally — it prints Google's exact message; open an issue with it |
+| `gemini:RESOURCE_EXHAUSTED` | Rate limit or quota hit (common on the free tier) | Wait a minute; for regular use enable billing on the key's Google Cloud project |
+| `gemini:timeout` | No answer within `LLM_TIMEOUT_S` (60 s) | Usually transient. Keep `GEMINI_THINKING_BUDGET=0` (thinking off) — it is much faster |
+| `gemini:UNAVAILABLE` / `gemini:network` | Google-side outage or network error | Retry later |
+| `gemini:SAFETY` / `gemini:blocked:…` | Google declined the photos | Retake photos showing only the packet |
+
 | Symptom | Fix |
 |---|---|
 | API fails at start with a settings error | Read the log line: a required variable is missing or invalid (by design, see `app/core/config.py`) |

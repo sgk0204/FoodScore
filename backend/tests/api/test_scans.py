@@ -459,3 +459,31 @@ async def test_inline_reaper_loop_survives_errors(services, monkeypatch):
     await asyncio.sleep(0.1)
     task.cancel()
     assert len(calls) >= 2
+
+
+@pytest.mark.parametrize(
+    ("kind", "code", "slug", "status"),
+    [
+        ("unavailable", "gemini:UNAVAILABLE", "provider-unavailable", 503),
+        ("rate_limit", "gemini:RESOURCE_EXHAUSTED", "provider-busy", 503),
+        ("config", "gemini:NOT_FOUND", "provider-misconfigured", 502),
+        ("blocked", "gemini:SAFETY", "unreadable-label", 422),
+    ],
+)
+async def test_provider_failures_show_a_specific_message_and_code(
+    client, services, extractor, monkeypatch, kind, code, slug, status
+):
+    async def failing(images, prompt_version):
+        raise ExtractionError(
+            "details for the log only", retryable=False, provider="gemini", kind=kind, code=code
+        )
+
+    monkeypatch.setattr(extractor, "extract", failing)
+    r = await post_scan(client)
+    await drain(services)
+    scan = (await client.get(f"/api/v1/scans/{r.json()['id']}")).json()
+    assert scan["status"] == "FAILED"
+    assert scan["error"]["type"].endswith(f"/{slug}")
+    assert scan["error"]["status"] == status
+    assert scan["error"]["provider_error"] == code
+    assert "details for the log only" not in str(scan["error"])  # provider text never shown

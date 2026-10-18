@@ -91,6 +91,9 @@ function Failed({ scan }: { scan: Scan }) {
             photo.
           </p>
         )}
+        {typeof scan.error?.provider_error === "string" && (
+          <p className="mt-2 text-xs opacity-80">Error code: {scan.error.provider_error}</p>
+        )}
       </Alert>
       <Link
         href="/scan"

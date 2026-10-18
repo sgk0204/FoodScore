@@ -129,6 +129,8 @@ test("unreadable nutrition photo asks for that specific retake", async ({ page }
   await attachPhotos(page);
   await page.getByRole("button", { name: "Get my score" }).click();
 
+  // Same allowance as the happy path: next dev compiles /result/[id] on first visit.
+  await expect(page).toHaveURL(new RegExp(`/result/${SCAN_ID}`), { timeout: 30_000 });
   await expect(page.getByText("Couldn't read the nutrition table")).toBeVisible();
   await expect(page.getByText("nutrition table", { exact: false }).last()).toBeVisible();
   await expect(page.getByRole("link", { name: "Scan again" })).toBeVisible();

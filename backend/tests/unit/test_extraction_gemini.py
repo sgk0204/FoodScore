@@ -157,3 +157,51 @@ async def test_network_errors_are_retried():
     result = await ex.extract([b"x"], "v1")
     assert result.provider == "gemini"
     assert len(models.calls) == 2
+
+
+@pytest.mark.parametrize(
+    ("http", "status", "kind"),
+    [
+        (429, "RESOURCE_EXHAUSTED", "rate_limit"),
+        (503, "UNAVAILABLE", "unavailable"),
+        (400, "INVALID_ARGUMENT", "config"),
+        (403, "PERMISSION_DENIED", "config"),
+        (404, "NOT_FOUND", "config"),
+    ],
+)
+async def test_api_errors_carry_kind_and_safe_code(http, status, kind):
+    err = genai_errors.APIError(http, {"error": {"code": http, "message": "m", "status": status}})
+    ex, _ = make(err, err, err)
+    with pytest.raises(ExtractionError) as info:
+        await ex.extract([b"x"], "v1")
+    assert info.value.kind == kind
+    assert info.value.code == f"gemini:{status}"
+
+
+async def test_thinking_is_disabled_by_default_and_configurable():
+    ex, models = make(response(GOOD))
+    await ex.extract([b"x"], "v1")
+    assert models.calls[0]["config"].thinking_config.thinking_budget == 0
+
+    ex, models = make(response(GOOD), thinking_budget=None)
+    await ex.extract([b"x"], "v1")
+    assert models.calls[0]["config"].thinking_config is None
+
+
+async def test_timeout_has_a_code():
+    import asyncio
+
+    class Slow:
+        async def generate_content(self, **_):
+            await asyncio.Event().wait()
+
+    ex = GeminiExtractor(
+        "k",
+        client=SimpleNamespace(aio=SimpleNamespace(models=Slow())),
+        timeout_s=0.01,
+        max_attempts=1,
+    )
+    with pytest.raises(ExtractionError) as info:
+        await ex.extract([b"x"], "v1")
+    assert info.value.code == "gemini:timeout"
+    assert info.value.kind == "unavailable"

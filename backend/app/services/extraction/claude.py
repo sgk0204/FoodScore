@@ -83,20 +83,31 @@ class ClaudeExtractor:
             return await self._client.beta.messages.create(**kwargs)
         except anthropic.RateLimitError as exc:
             raise ExtractionError(
-                "Claude rate limited", retryable=True, provider=self.name
+                "Claude rate limited",
+                retryable=True,
+                provider=self.name,
+                kind="rate_limit",
+                code="claude:rate_limited",
             ) from exc
         except anthropic.APITimeoutError as exc:
             raise ExtractionError(
-                "Claude request timed out", retryable=True, provider=self.name
+                "Claude request timed out",
+                retryable=True,
+                provider=self.name,
+                code="claude:timeout",
             ) from exc
         except anthropic.APIConnectionError as exc:
             raise ExtractionError(
-                "Claude connection error", retryable=True, provider=self.name
+                "Claude connection error", retryable=True, provider=self.name, code="claude:network"
             ) from exc
         except anthropic.APIStatusError as exc:
             retryable = exc.status_code >= 500 or exc.status_code in (408, 409)
             raise ExtractionError(
-                f"Claude API error {exc.status_code}", retryable=retryable, provider=self.name
+                f"Claude API error {exc.status_code}",
+                retryable=retryable,
+                provider=self.name,
+                kind="unavailable" if retryable else "config",
+                code=f"claude:{exc.status_code}",
             ) from exc
 
     def _text(self, response: Any) -> str:
@@ -105,7 +116,11 @@ class ClaudeExtractor:
                 getattr(response.stop_details, "category", None) if response.stop_details else None
             )
             raise ExtractionError(
-                f"Claude refused (category={category})", retryable=False, provider=self.name
+                f"Claude refused (category={category})",
+                retryable=False,
+                provider=self.name,
+                kind="blocked",
+                code="claude:refusal",
             )
         if response.stop_reason == "max_tokens":
             raise ExtractionError("Claude output truncated", retryable=True, provider=self.name)

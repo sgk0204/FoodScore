@@ -242,6 +242,37 @@ def problem(
     return body
 
 
+# What the user sees for each failure kind (ExtractionError.kind): slug, title, detail, status.
+PROVIDER_ERRORS: dict[str, tuple[str, str, str, int]] = {
+    "unavailable": (
+        "provider-unavailable",
+        "Label reading is temporarily unavailable",
+        "Our AI provider is not responding. Please try again in a few minutes.",
+        503,
+    ),
+    "rate_limit": (
+        "provider-busy",
+        "Label reading is busy right now",
+        "Too many scans are being read at once. Please wait a minute and try again.",
+        503,
+    ),
+    "config": (
+        "provider-misconfigured",
+        "Label reading is not set up correctly",
+        "The AI provider rejected the request. The site owner needs to check the API key "
+        "and model settings.",
+        502,
+    ),
+    "blocked": (
+        "unreadable-label",
+        "Couldn't read these photos",
+        "The AI provider declined to process these photos. Please retake them showing only "
+        "the packet.",
+        422,
+    ),
+}
+
+
 async def _fail(session: AsyncSession, scan: Scan, error: dict[str, Any]) -> None:
     scan.status = ScanStatus.FAILED
     scan.error = error
@@ -343,18 +374,20 @@ async def _extract_and_score(svc: Services, session: AsyncSession, scan: Scan) -
         await _delete_images(svc, scan)
         return
     except ExtractionError as exc:
-        metrics.LLM_FAILURES.labels(provider=exc.provider or provider, kind="provider").inc()
-        log.error("extraction_failed", error=str(exc), retryable=exc.retryable)
-        await _fail(
-            session,
-            scan,
-            problem(
-                "provider-unavailable",
-                "Label reading is temporarily unavailable",
-                "Our AI provider is not responding. Please try again in a few minutes.",
-                status=503,
-            ),
+        metrics.LLM_FAILURES.labels(provider=exc.provider or provider, kind=exc.kind).inc()
+        # The full provider message is logged (never shown); users get a safe short code.
+        log.error(
+            "extraction_failed",
+            error=str(exc),
+            code=exc.code,
+            kind=exc.kind,
+            retryable=exc.retryable,
+            cause=repr(exc.__cause__)[:300] if exc.__cause__ else None,
         )
+        body = PROVIDER_ERRORS.get(exc.kind, PROVIDER_ERRORS["unavailable"])
+        error = problem(*body)
+        error["provider_error"] = exc.code
+        await _fail(session, scan, error)
         await _delete_images(svc, scan)
         return
 
