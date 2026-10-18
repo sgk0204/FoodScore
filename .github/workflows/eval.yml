@@ -30,7 +30,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          DATABASE_URL: sqlite+aiosqlite:///:memory:
+          DATABASE_URL: "sqlite+aiosqlite:///:memory:"
           REDIS_URL: redis://localhost:6379/0
           JWT_SECRET: eval-only-secret-not-used-for-anything-real
           LLM_PROVIDER: ${{ inputs.provider || 'claude' }}
