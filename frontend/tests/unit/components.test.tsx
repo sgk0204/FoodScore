@@ -65,3 +65,25 @@ describe("IngredientList", () => {
     expect(screen.getAllByText("(flagged)", { exact: false })).toHaveLength(2);
   });
 });
+
+describe("CaptureStep", () => {
+  it("offers both camera and gallery upload (capture would force camera-only on phones)", async () => {
+    const { CaptureStep } = await import("@/components/CaptureStep");
+    render(
+      <CaptureStep
+        index={0}
+        role="front"
+        title="Front"
+        tip="tip"
+        value={null}
+        onChange={() => {}}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /Take photo/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Upload photo/ })).toBeInTheDocument();
+    const camera = screen.getByTestId("camera-front");
+    const gallery = screen.getByTestId("input-front");
+    expect(camera).toHaveAttribute("capture", "environment");
+    expect(gallery).not.toHaveAttribute("capture");
+  });
+});

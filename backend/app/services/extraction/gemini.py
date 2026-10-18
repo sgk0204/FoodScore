@@ -26,6 +26,7 @@ from pydantic import ValidationError
 
 from app.schemas.extraction import Extraction
 from app.services.extraction.base import (
+    ErrorKind,
     ExtractionError,
     ExtractionResult,
     SchemaError,
@@ -55,11 +56,16 @@ class GeminiExtractor:
         api_key: str,
         *,
         model: str = "gemini-2.5-flash",
-        timeout_s: float = 30.0,
+        timeout_s: float = 60.0,
         max_attempts: int = 3,
+        thinking_budget: int | None = 0,
         client: Any | None = None,
     ) -> None:
         self.model = model
+        # Transcribing a label needs no step-by-step reasoning; thinking only adds latency and
+        # cost. 0 disables it on Flash models. None keeps the model default (Pro models cannot
+        # disable thinking).
+        self.thinking_budget = thinking_budget
         self.timeout_s = timeout_s
         self.max_attempts = max_attempts
         self._client = client or genai.Client(api_key=api_key)
@@ -72,6 +78,11 @@ class GeminiExtractor:
             max_output_tokens=16000,
             response_mime_type="application/json",
             response_json_schema=self._schema,
+            thinking_config=(
+                types.ThinkingConfig(thinking_budget=self.thinking_budget)
+                if self.thinking_budget is not None
+                else None
+            ),
         )
         try:
             return await self._client.aio.models.generate_content(
@@ -79,15 +90,26 @@ class GeminiExtractor:
             )
         except genai_errors.APIError as exc:
             code = int(getattr(exc, "code", 0) or 0)
-            retryable = code in (408, 429) or code >= 500
+            status = str(getattr(exc, "status", "") or code)
+            if code == 429:
+                kind: ErrorKind = "rate_limit"
+            elif code >= 500 or code == 408:
+                kind = "unavailable"
+            else:  # 400 bad request/schema, 401/403 key, 404 unknown model
+                kind = "config"
             raise ExtractionError(
-                f"Gemini API error {code}: {getattr(exc, 'message', '')}"[:300],
-                retryable=retryable,
+                f"Gemini API error {code} {status}: {getattr(exc, 'message', '')}"[:400],
+                retryable=kind in ("rate_limit", "unavailable"),
                 provider=self.name,
+                kind=kind,
+                code=f"gemini:{status}",
             ) from exc
         except httpx.TransportError as exc:  # connection reset, DNS, read timeout…
             raise ExtractionError(
-                f"Gemini network error: {type(exc).__name__}", retryable=True, provider=self.name
+                f"Gemini network error: {type(exc).__name__}",
+                retryable=True,
+                provider=self.name,
+                code="gemini:network",
             ) from exc
 
     def _text(self, response: Any) -> str:
@@ -98,6 +120,8 @@ class GeminiExtractor:
                 f"Gemini blocked the request ({feedback.block_reason})",
                 retryable=False,
                 provider=self.name,
+                kind="blocked",
+                code=f"gemini:blocked:{feedback.block_reason}",
             )
         candidates = getattr(response, "candidates", None) or []
         reason = getattr(candidates[0], "finish_reason", None) if candidates else None
@@ -106,14 +130,26 @@ class GeminiExtractor:
         if text:
             return str(text)
         if reason_name in _RETRYABLE_FINISH:
-            raise ExtractionError("Gemini output truncated", retryable=True, provider=self.name)
+            raise ExtractionError(
+                "Gemini output truncated",
+                retryable=True,
+                provider=self.name,
+                code="gemini:MAX_TOKENS",
+            )
         if reason_name and reason_name not in ("STOP", "FINISH_REASON_UNSPECIFIED"):
             raise ExtractionError(
                 f"Gemini returned no answer (finish_reason={reason_name})",
                 retryable=False,
                 provider=self.name,
+                kind="blocked",
+                code=f"gemini:{reason_name}",
             )
-        raise ExtractionError("Gemini returned an empty answer", retryable=True, provider=self.name)
+        raise ExtractionError(
+            "Gemini returned an empty answer",
+            retryable=True,
+            provider=self.name,
+            code="gemini:empty",
+        )
 
     @staticmethod
     def _usage(response: Any) -> tuple[int, int]:

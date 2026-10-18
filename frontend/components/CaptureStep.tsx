@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Loader2, RotateCcw } from "lucide-react";
+import { Camera, ImageUp, Loader2 } from "lucide-react";
 import { useId, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -46,7 +46,9 @@ export function CaptureStep({
   serverError?: string | null;
 }) {
   const inputId = useId();
-  const inputRef = useRef<HTMLInputElement>(null);
+  // Two inputs: `capture` forces the camera on phones, so the gallery needs its own input.
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +65,7 @@ export function CaptureStep({
       onChange(null);
     } finally {
       setBusy(false);
-      if (inputRef.current) inputRef.current.value = "";
+      for (const ref of [cameraRef, galleryRef]) if (ref.current) ref.current.value = "";
     }
   }
 
@@ -96,28 +98,22 @@ export function CaptureStep({
         </div>
       </div>
 
-      {value ? (
-        <div className="mt-3 flex items-center gap-3">
+      {value && (
+        <div className="mt-3">
           {/* eslint-disable-next-line @next/next/no-img-element -- local blob preview */}
           <img
             src={value.previewUrl}
             alt={`${title} preview`}
             className="h-24 w-24 rounded-lg object-cover"
           />
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={() => inputRef.current?.click()}
-          >
-            <RotateCcw aria-hidden className="h-4 w-4" /> Retake
-          </Button>
         </div>
-      ) : (
+      )}
+
+      <div className="mt-3 grid grid-cols-2 gap-2">
         <Button
           type="button"
-          className="mt-3 w-full"
-          onClick={() => inputRef.current?.click()}
+          variant={value ? "secondary" : "primary"}
+          onClick={() => cameraRef.current?.click()}
           disabled={busy}
           aria-describedby={`${inputId}-title`}
         >
@@ -126,18 +122,39 @@ export function CaptureStep({
           ) : (
             <Camera aria-hidden className="h-4 w-4" />
           )}
-          {busy ? "Preparing…" : "Take or choose photo"}
+          {busy ? "Preparing…" : value ? "Retake" : "Take photo"}
         </Button>
-      )}
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => galleryRef.current?.click()}
+          disabled={busy}
+          aria-describedby={`${inputId}-title`}
+        >
+          <ImageUp aria-hidden className="h-4 w-4" />
+          {value ? "Choose another" : "Upload photo"}
+        </Button>
+      </div>
 
       <input
-        ref={inputRef}
-        id={inputId}
+        ref={cameraRef}
         type="file"
         accept="image/*,.heic,.heif"
         capture="environment"
         className="sr-only"
-        aria-label={`${title} photo`}
+        tabIndex={-1}
+        aria-label={`Take ${title} photo with camera`}
+        data-testid={`camera-${role}`}
+        onChange={(e) => void handle(e.target.files?.[0])}
+      />
+      <input
+        ref={galleryRef}
+        id={inputId}
+        type="file"
+        accept="image/*,.heic,.heif"
+        className="sr-only"
+        tabIndex={-1}
+        aria-label={`Upload ${title} photo`}
         data-testid={`input-${role}`}
         onChange={(e) => void handle(e.target.files?.[0])}
       />

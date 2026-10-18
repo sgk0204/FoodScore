@@ -9,7 +9,7 @@ from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 import structlog
 
@@ -19,20 +19,40 @@ log = structlog.get_logger(__name__)
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 
 
-class ExtractionError(Exception):
-    """Extraction failed. ``retryable`` errors are worth another attempt or a fallback provider."""
+ErrorKind = Literal["config", "rate_limit", "unavailable", "blocked", "schema"]
 
-    def __init__(self, message: str, *, retryable: bool, provider: str = "") -> None:
+
+class ExtractionError(Exception):
+    """Extraction failed. ``retryable`` errors are worth another attempt or a fallback provider.
+
+    ``kind`` drives the message the user sees; ``code`` is a short, secret-free diagnostic
+    (e.g. ``gemini:RESOURCE_EXHAUSTED``) shown on the failed-scan screen so the site owner can
+    tell a bad key from a rate limit without digging through logs.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        retryable: bool,
+        provider: str = "",
+        kind: ErrorKind = "unavailable",
+        code: str = "",
+    ) -> None:
         super().__init__(message)
         self.retryable = retryable
         self.provider = provider
+        self.kind = kind
+        self.code = code or f"{provider or 'llm'}:error"
 
 
 class SchemaError(ExtractionError):
     """The model answered, but the output never validated (even after the repair prompt)."""
 
     def __init__(self, message: str, provider: str = "") -> None:
-        super().__init__(message, retryable=False, provider=provider)
+        super().__init__(
+            message, retryable=False, provider=provider, kind="schema", code=f"{provider}:schema"
+        )
 
 
 @dataclass(slots=True)
@@ -157,7 +177,10 @@ async def with_retries[T](
             return await asyncio.wait_for(fn(), timeout=timeout_s)
         except TimeoutError as exc:
             last = ExtractionError(
-                f"{provider} timed out after {timeout_s}s", retryable=True, provider=provider
+                f"{provider} timed out after {timeout_s}s",
+                retryable=True,
+                provider=provider,
+                code=f"{provider}:timeout",
             )
             last.__cause__ = exc
         except ExtractionError as exc:

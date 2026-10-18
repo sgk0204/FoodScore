@@ -68,7 +68,8 @@ class Settings(BaseSettings):
 
     # --- jobs ---
     job_mode: Literal["arq", "inline"] = "arq"
-    stuck_processing_s: int = 120
+    # Must exceed the worst-case retry time: llm_max_attempts × llm_timeout_s + backoff.
+    stuck_processing_s: int = 300
     stuck_queued_s: int = 600
     review_expiry_s: int = 24 * 3600
 
@@ -76,7 +77,7 @@ class Settings(BaseSettings):
     llm_provider: ProviderName = "fake"
     llm_fallback_provider: ProviderName | None = None
     prompt_version: str = "v1"
-    llm_timeout_s: float = 30.0
+    llm_timeout_s: float = 60.0
     llm_max_attempts: int = 3
     review_confidence_threshold: float = 0.7
     anthropic_api_key: SecretStr | None = None
@@ -85,6 +86,9 @@ class Settings(BaseSettings):
     claude_server_fallback: bool = True
     gemini_api_key: SecretStr | None = None
     gemini_model: str = "gemini-2.5-flash"
+    # 0 = no thinking (fast, cheap; fine for transcription). Use -1 for dynamic, or leave a
+    # positive budget for Pro models, which cannot disable thinking.
+    gemini_thinking_budget: int | None = 0
     fake_fixture: str = "chocolate_biscuit"
 
     # --- observability ---

@@ -66,6 +66,7 @@ def _build_one(name: str, settings: Settings) -> VisionExtractor:
             model=settings.gemini_model,
             timeout_s=settings.llm_timeout_s,
             max_attempts=settings.llm_max_attempts,
+            thinking_budget=settings.gemini_thinking_budget,
         )
     from app.services.extraction.fake import FakeExtractor
 
