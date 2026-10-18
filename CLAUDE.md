@@ -186,7 +186,7 @@ the model, prompt or schema. Unit tests: `tests/unit/test_extraction_gemini.py`.
   `.prettierrc.json` sets `"tailwindConfig": "./tailwind.config.ts"` so it uses the v3 path.
   Remove that line if the project moves to Tailwind 4.
 - **Test tooling moves as a set:** Vitest 5 + `@vitejs/plugin-react` 6 need Vite 8 (pinned in
-  devDependencies). Dependabot groups them as `test-tooling`.
+  devDependencies). Upgrade them together.
 - **Async tests that check "concurrent" behaviour must force the overlap** (e.g. hold the fake
   extractor on an `asyncio.Event`) — on a fast runner the first background job can finish
   before the second request arrives.
@@ -194,7 +194,7 @@ the model, prompt or schema. Unit tests: `tests/unit/test_extraction_gemini.py`.
   `static/css/` — the CI purge guard greps all of `.next/static`. `next lint` no longer exists;
   linting is plain `eslint .` with eslint-config-next's native flat configs.
 - **ESLint stays on 9** until `eslint-plugin-react`, `jsx-a11y` and `import` (pulled in by
-  eslint-config-next) support ESLint 10; Dependabot is told to skip ESLint majors.
+  eslint-config-next) support ESLint 10.
 - CI runs `npm audit --audit-level=high`. If you add npm `overrides`, regenerate
   `package-lock.json` (delete it and `node_modules`) or the old nested copy stays.
 - **Managed Postgres URLs** (`postgres://…?sslmode=require&channel_binding=require`) are
@@ -225,3 +225,10 @@ variable `DEPLOY_VIA_ACTIONS=true`; `eval.yml` runs only with `EVAL_ENABLED=true
 | Result screen | `frontend/app/result/[id]/page.tsx` |
 | Edge case → test map | `docs/edge-cases.md` |
 | Why things are the way they are | `docs/adr/` |
+
+## Dependency updates
+
+There is no Dependabot (removed on purpose). Update dependencies manually in a PR: keep coupled
+packages together (Next + eslint-config-next; Vitest + `@vitejs/plugin-react` + Vite), run
+`npm audit --audit-level=high` and `pip-audit`, and let CI verify. GitHub Actions should stay on
+Node 24 releases.
