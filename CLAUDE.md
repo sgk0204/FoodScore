@@ -6,7 +6,7 @@ Guidance for Claude (and humans) working in this repository. Read this before ch
 
 FoodScore: a mobile-first web app that photographs a packaged-food label (front, nutrition
 table, ingredients), extracts the data with a vision LLM, and scores the product 0–100 with a
-deterministic engine. Monorepo: `frontend/` (Next.js 15, React 19, TS, Tailwind 3, TanStack
+deterministic engine. Monorepo: `frontend/` (Next.js 16, React 19, TS, Tailwind 3, TanStack
 Query, Zod), `backend/` (Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2.1 async, Alembic,
 ARQ, Redis), `eval/` (extraction accuracy harness), `docs/` (architecture, ADRs, methodology,
 API, edge-case traceability). The original spec is the project guide (sections referenced as
@@ -179,10 +179,13 @@ the model, prompt or schema. Unit tests: `tests/unit/test_extraction_gemini.py`.
   removing family revocation.
 - On Windows, a stray `package-lock.json` in a parent directory confuses Next's workspace root;
   `outputFileTracingRoot` is pinned in `next.config.ts` for that reason.
-- **`package.json` overrides Next's nested `postcss`** (`overrides.next.postcss`) to clear a
-  high-severity advisory without jumping to Next 16. CI runs `npm audit --audit-level=high`;
-  after changing overrides, regenerate `package-lock.json` (delete it and `node_modules`) or the
-  old nested copy stays.
+- **Next 16 builds with Turbopack:** built CSS lands in `.next/static/chunks/`, not
+  `static/css/` — the CI purge guard greps all of `.next/static`. `next lint` no longer exists;
+  linting is plain `eslint .` with eslint-config-next's native flat configs.
+- **ESLint stays on 9** until `eslint-plugin-react`, `jsx-a11y` and `import` (pulled in by
+  eslint-config-next) support ESLint 10; Dependabot is told to skip ESLint majors.
+- CI runs `npm audit --audit-level=high`. If you add npm `overrides`, regenerate
+  `package-lock.json` (delete it and `node_modules`) or the old nested copy stays.
 - **Managed Postgres URLs** (`postgres://…?sslmode=require&channel_binding=require`) are
   rewritten by `normalise_database_url` in `app/core/config.py` (also used by Alembic's
   `env.py`). Keep both call sites if you touch it.

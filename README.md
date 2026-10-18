@@ -232,7 +232,7 @@ per scan; results are appended to [eval/results.md](eval/results.md). How to add
 
 ```
 foodscore/
-├── frontend/                    Next.js 15 (App Router) + TypeScript + Tailwind
+├── frontend/                    Next.js 16 (App Router) + TypeScript + Tailwind
 │   ├── app/                     /, /scan, /result/[id], /history, /methodology, /login, /register, /privacy
 │   ├── components/              CaptureStep, ScoreDial, PenaltyList, NutritionTable, ReviewForm, …
 │   ├── lib/api/                 typed client, Zod schemas, TanStack Query hooks, openapi.json → schema.d.ts

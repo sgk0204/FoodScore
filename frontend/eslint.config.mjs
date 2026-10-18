@@ -1,20 +1,19 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
 
-const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta.url)) });
-
-const config = [
-  {
-    ignores: [
-      ".next/**",
-      "node_modules/**",
-      "lib/api/schema.d.ts",
-      "playwright-report/**",
-      "next-env.d.ts",
-    ],
-  },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+// eslint-config-next 16 ships native flat configs, so no FlatCompat wrapper is needed.
+const config = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores([
+    ".next/**",
+    "node_modules/**",
+    "lib/api/schema.d.ts",
+    "playwright-report/**",
+    "test-results/**",
+    "next-env.d.ts",
+  ]),
   {
     rules: {
       // XSS defence (edge case 47): extracted product names are rendered as text only.
@@ -22,6 +21,6 @@ const config = [
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     },
   },
-];
+]);
 
 export default config;

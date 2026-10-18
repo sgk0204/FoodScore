@@ -81,7 +81,8 @@ jobs:
       - run: npm test
       - run: npm run build
       - name: Band colour classes survived Tailwind purging
-        run: grep -q "bg-band-bad" .next/static/css/*.css
+        # Searches all built CSS: webpack writes static/css/, Turbopack (Next 16) static/chunks/.
+        run: grep -rlq "bg-band-bad" .next/static --include="*.css"
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
         env: { CI: "true" }
