@@ -1,19 +1,32 @@
+# Updates arrive as a few grouped PRs instead of one per package. Packages that must move
+# together (Next + its ESLint config; Vitest + Vite plugin + jsdom) share a group.
 version: 2
 updates:
   - package-ecosystem: pip
     directory: /backend
     schedule: { interval: weekly }
+    groups:
+      backend-minor-patch:
+        update-types: ["minor", "patch"]
+
   - package-ecosystem: npm
     directory: /frontend
     schedule: { interval: weekly }
     groups:
-      # Next and its ESLint config must move together (their majors are coupled).
       nextjs:
         patterns: ["next", "eslint-config-next", "@next/*"]
+      test-tooling:
+        patterns: ["vitest", "@vitest/*", "@vitejs/*", "vite", "jsdom", "@testing-library/*", "@playwright/test"]
+      frontend-minor-patch:
+        update-types: ["minor", "patch"]
     ignore:
       # ESLint 10 is blocked until eslint-plugin-react / jsx-a11y / import support it.
       - dependency-name: eslint
         update-types: ["version-update:semver-major"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: monthly }
+    groups:
+      github-actions:
+        patterns: ["*"]

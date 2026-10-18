@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ vars.EVAL_ENABLED == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with: { python-version: "3.12", cache: pip, cache-dependency-path: backend/pyproject.toml }
       - run: pip install -e "backend[dev]"
       - name: Fetch labelled photos
@@ -35,6 +35,6 @@ jobs:
           JWT_SECRET: eval-only-secret-not-used-for-anything-real
           LLM_PROVIDER: ${{ inputs.provider || 'gemini' }}
         run: python -m eval.run --provider "${{ inputs.provider || 'gemini' }}" --prompt "${{ inputs.prompt || 'v1' }}" --min-exact 0.9
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with: { name: eval-results, path: eval/results.md }
