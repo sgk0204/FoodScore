@@ -1,0 +1,89 @@
+{
+  "is_food_label": true,
+  "image_roles": [
+    "front",
+    "nutrition",
+    "ingredients"
+  ],
+  "product_name": "Choco Cream Biscuit",
+  "brand": "Acme Foods",
+  "category_guess": "snack",
+  "basis": "per_100g",
+  "serving_size_g": null,
+  "energy": {
+    "raw": "480 kcal",
+    "value": 480,
+    "unit": "kcal",
+    "confidence": 0.95
+  },
+  "sugars": {
+    "raw": "30 g",
+    "value": 30,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "added_sugars": {
+    "raw": "28 g",
+    "value": 28,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "carbohydrates": {
+    "raw": "64 g",
+    "value": 64,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "total_fat": {
+    "raw": "22 g",
+    "value": 22,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "saturated_fat": {
+    "raw": "10 g",
+    "value": 10,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "trans_fat": {
+    "raw": "0.1 g",
+    "value": 0.1,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "sodium_or_salt": {
+    "raw": "0.6 g",
+    "value": 0.6,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "fibre": {
+    "raw": "2 g",
+    "value": 2,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "protein": {
+    "raw": "6 g",
+    "value": 6,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "salt_label": "salt",
+  "ingredients": [
+    "Whole wheat flour",
+    "Palm oil",
+    "Cocoa solids",
+    "Sugar",
+    "Emulsifier (INS 322)",
+    "Raising agent (INS 503)",
+    "Artificial flavour (chocolate)"
+  ],
+  "additive_codes": [
+    "INS 322",
+    "INS 503"
+  ],
+  "legibility_issues": [],
+  "multiple_products": false
+}

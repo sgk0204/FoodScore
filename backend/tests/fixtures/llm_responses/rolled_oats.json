@@ -1,0 +1,80 @@
+{
+  "is_food_label": true,
+  "image_roles": [
+    "front",
+    "nutrition",
+    "ingredients"
+  ],
+  "product_name": "Rolled Oats",
+  "brand": "Farm Fresh",
+  "category_guess": "cereal",
+  "basis": "per_100g",
+  "serving_size_g": null,
+  "energy": {
+    "raw": "389 kcal",
+    "value": 389,
+    "unit": "kcal",
+    "confidence": 0.95
+  },
+  "sugars": {
+    "raw": "1 g",
+    "value": 1,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "added_sugars": {
+    "raw": "0 g",
+    "value": 0,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "carbohydrates": {
+    "raw": "66 g",
+    "value": 66,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "total_fat": {
+    "raw": "6.9 g",
+    "value": 6.9,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "saturated_fat": {
+    "raw": "1.2 g",
+    "value": 1.2,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "trans_fat": {
+    "raw": "0 g",
+    "value": 0,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "sodium_or_salt": {
+    "raw": "2 mg",
+    "value": 2,
+    "unit": "mg",
+    "confidence": 0.95
+  },
+  "fibre": {
+    "raw": "10.6 g",
+    "value": 10.6,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "protein": {
+    "raw": "13.2 g",
+    "value": 13.2,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "salt_label": "sodium",
+  "ingredients": [
+    "Rolled oats (100%)"
+  ],
+  "additive_codes": [],
+  "legibility_issues": [],
+  "multiple_products": false
+}

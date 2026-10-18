@@ -1,0 +1,87 @@
+{
+  "is_food_label": true,
+  "image_roles": [
+    "front",
+    "nutrition",
+    "ingredients"
+  ],
+  "product_name": "Salted Potato Chips",
+  "brand": "Crunchy",
+  "category_guess": "snack",
+  "basis": "per_100g",
+  "serving_size_g": null,
+  "energy": {
+    "raw": "536 kcal",
+    "value": 536,
+    "unit": "kcal",
+    "confidence": 0.9
+  },
+  "sugars": {
+    "raw": "0.9 g",
+    "value": 0.9,
+    "unit": "g",
+    "confidence": 0.5
+  },
+  "added_sugars": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "carbohydrates": {
+    "raw": "53 g",
+    "value": 53,
+    "unit": "g",
+    "confidence": 0.6
+  },
+  "total_fat": {
+    "raw": "33 g",
+    "value": 33,
+    "unit": "g",
+    "confidence": 0.55
+  },
+  "saturated_fat": {
+    "raw": "15 g",
+    "value": 15,
+    "unit": "g",
+    "confidence": 0.5
+  },
+  "trans_fat": {
+    "raw": "0.1 g",
+    "value": 0.1,
+    "unit": "g",
+    "confidence": 0.6
+  },
+  "sodium_or_salt": {
+    "raw": "620 mg",
+    "value": 620,
+    "unit": "mg",
+    "confidence": 0.45
+  },
+  "fibre": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "protein": {
+    "raw": "6.4 g",
+    "value": 6.4,
+    "unit": "g",
+    "confidence": 0.8
+  },
+  "salt_label": "sodium",
+  "ingredients": [
+    "Potato",
+    "Edible vegetable oil (palmolein)",
+    "Salt"
+  ],
+  "additive_codes": [],
+  "legibility_issues": [
+    {
+      "image": "nutrition",
+      "issue": "glare over the fat and sodium rows"
+    }
+  ],
+  "multiple_products": false
+}

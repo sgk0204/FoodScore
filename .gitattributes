@@ -1,0 +1,6 @@
+# Store text as LF in the repo and check out as LF everywhere (Docker images and shell
+# scripts break with CRLF). Binary files are left alone.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary

@@ -1,0 +1,87 @@
+{
+  "is_food_label": true,
+  "image_roles": [
+    "front",
+    "nutrition",
+    "ingredients"
+  ],
+  "product_name": "Mystery Snack",
+  "brand": null,
+  "category_guess": "snack",
+  "basis": "per_100g",
+  "serving_size_g": null,
+  "energy": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "sugars": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "added_sugars": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "carbohydrates": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "total_fat": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "saturated_fat": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "trans_fat": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "sodium_or_salt": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "fibre": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "protein": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "salt_label": null,
+  "ingredients": [
+    "Corn",
+    "Oil",
+    "Salt"
+  ],
+  "additive_codes": [],
+  "legibility_issues": [
+    {
+      "image": "nutrition",
+      "issue": "photo is too blurry to read the table"
+    }
+  ],
+  "multiple_products": false
+}

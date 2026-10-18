@@ -1,0 +1,71 @@
+# OPTIONAL deploy pipeline driven from GitHub Actions: staging → smoke test → production behind
+# a manual approval (guide §4.6).
+#
+# You do NOT need this for the default setup in docs/deployment.md: Render deploys main only after
+# CI passes (`autoDeployTrigger: checksPass` in render.yaml) and Vercel deploys from its Git
+# integration. Use this workflow instead when you want an explicit staging stage and a manual
+# production gate. It is off until you set the repository variable DEPLOY_VIA_ACTIONS=true.
+#
+# Then add, per GitHub environment ("staging" and "production"):
+#   secrets: RENDER_API_DEPLOY_HOOK, VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+#            RENDER_WORKER_DEPLOY_HOOK (only if you run the separate worker)
+#   variable: PUBLIC_URL (e.g. https://foodscore.vercel.app)
+# and configure "Required reviewers" on the production environment — that is the approval gate.
+# Set Render's auto-deploy to "Off" so deploys only come from here.
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  staging:
+    if: >-
+      vars.DEPLOY_VIA_ACTIONS == 'true' &&
+      (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy backend (Render deploy hooks)
+        run: |
+          curl -fsS -X POST "${{ secrets.RENDER_API_DEPLOY_HOOK }}"
+          if [ -n "${{ secrets.RENDER_WORKER_DEPLOY_HOOK }}" ]; then curl -fsS -X POST "${{ secrets.RENDER_WORKER_DEPLOY_HOOK }}"; fi
+      - name: Deploy frontend (Vercel preview)
+        working-directory: frontend
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: npx vercel@latest deploy --token "${{ secrets.VERCEL_TOKEN }}" --yes
+      - name: Smoke test
+        run: |
+          for i in $(seq 1 30); do
+            curl -fsS "${{ vars.PUBLIC_URL }}/api/v1/methodology" | grep -q scoring_version && exit 0
+            sleep 10
+          done
+          exit 1
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production # required reviewers = manual approval
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy backend (Render deploy hooks)
+        run: |
+          curl -fsS -X POST "${{ secrets.RENDER_API_DEPLOY_HOOK }}"
+          if [ -n "${{ secrets.RENDER_WORKER_DEPLOY_HOOK }}" ]; then curl -fsS -X POST "${{ secrets.RENDER_WORKER_DEPLOY_HOOK }}"; fi
+      - name: Deploy frontend (Vercel production)
+        working-directory: frontend
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: npx vercel@latest deploy --prod --token "${{ secrets.VERCEL_TOKEN }}" --yes
+      - name: Smoke test
+        run: curl -fsS "${{ vars.PUBLIC_URL }}/api/v1/methodology" | grep -q scoring_version

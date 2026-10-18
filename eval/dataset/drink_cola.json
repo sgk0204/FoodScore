@@ -1,0 +1,21 @@
+{
+  "id": "drink_cola",
+  "category": "beverage",
+  "notes": "Per 100 ml, sodium in mg, 'Nil' fat values.",
+  "fake_fixture": "cola_drink",
+  "images": {
+    "front": "images/drink_cola_front.jpg",
+    "nutrition": "images/drink_cola_nutrition.jpg",
+    "ingredients": "images/drink_cola_ingredients.jpg"
+  },
+  "expected": {
+    "is_food_label": true,
+    "basis": "per_100ml",
+    "nutrition": {
+      "energy_kcal": 42, "sugars_g": 10.6, "added_sugars_g": 10.6, "carbs_g": 10.6, "fat_g": 0,
+      "sat_fat_g": 0, "trans_fat_g": 0, "salt_g": 0.025, "fibre_g": null, "protein_g": 0
+    },
+    "ingredients": ["Carbonated water", "Sugar", "Colour (INS 150d)", "Acidity regulator (INS 338)",
+                    "Natural flavouring substances", "Caffeine"]
+  }
+}

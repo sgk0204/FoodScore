@@ -1,0 +1,93 @@
+{
+  "is_food_label": true,
+  "image_roles": [
+    "front",
+    "nutrition",
+    "ingredients"
+  ],
+  "product_name": "Masala Instant Noodles",
+  "brand": "Quickbite",
+  "category_guess": "snack",
+  "basis": "per_serving",
+  "serving_size_g": 70,
+  "energy": {
+    "raw": "1310 kJ / 313 kcal",
+    "value": 313,
+    "unit": "kcal",
+    "confidence": 0.95
+  },
+  "sugars": {
+    "raw": "1.4 g",
+    "value": 1.4,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "added_sugars": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "carbohydrates": {
+    "raw": "42 g",
+    "value": 42,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "total_fat": {
+    "raw": "13 g",
+    "value": 13,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "saturated_fat": {
+    "raw": "6.2 g",
+    "value": 6.2,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "trans_fat": {
+    "raw": "<0.1 g",
+    "value": 0.05,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "sodium_or_salt": {
+    "raw": "860 mg",
+    "value": 860,
+    "unit": "mg",
+    "confidence": 0.95
+  },
+  "fibre": {
+    "raw": "1.8 g",
+    "value": 1.8,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "protein": {
+    "raw": "6.5 g",
+    "value": 6.5,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "salt_label": "sodium",
+  "ingredients": [
+    "Noodles > refined wheat flour (maida)",
+    "Noodles > palm oil",
+    "Noodles > salt",
+    "Noodles > thickener (INS 508)",
+    "Noodles > humectant (INS 451)",
+    "Tastemaker > mixed spices",
+    "Tastemaker > sugar",
+    "Tastemaker > flavour enhancer (INS 627, INS 631)",
+    "Tastemaker > hydrolysed vegetable protein"
+  ],
+  "additive_codes": [
+    "INS 508",
+    "INS 451",
+    "INS 627",
+    "INS 631"
+  ],
+  "legibility_issues": [],
+  "multiple_products": false
+}

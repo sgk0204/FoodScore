@@ -1,0 +1,6 @@
+.next
+node_modules
+lib/api/schema.d.ts
+lib/api/openapi.json
+playwright-report
+test-results

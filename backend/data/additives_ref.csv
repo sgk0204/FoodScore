@@ -1,0 +1,69 @@
+code,name,aliases,risk_tier,source_url,notes
+INS 171,titanium dioxide,E171|titanium white,high,https://www.efsa.europa.eu/en/news/titanium-dioxide-e171-no-longer-considered-safe-when-used-food-additive,EFSA 2021: genotoxicity concern; banned as food additive in the EU from 2022
+INS 250,sodium nitrite,E250,high,https://www.iarc.who.int/news-events/iarc-monographs-evaluation-of-consumption-of-red-meat-and-processed-meat/,IARC Group 1 for processed meat; nitrite is the mechanism of concern
+INS 249,potassium nitrite,E249,high,https://www.iarc.who.int/news-events/iarc-monographs-evaluation-of-consumption-of-red-meat-and-processed-meat/,Same concern as sodium nitrite
+INS 924,potassium bromate,E924|bromate,high,https://monographs.iarc.who.int/agents-classified-by-the-iarc/,IARC Group 2B; not permitted in many jurisdictions
+INS 320,butylated hydroxyanisole,E320|BHA,high,https://monographs.iarc.who.int/agents-classified-by-the-iarc/,IARC Group 2B
+INS 102,tartrazine,E102|yellow 5,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,Azo dye; EU requires hyperactivity warning label
+INS 110,sunset yellow FCF,E110|sunset yellow|yellow 6,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,Azo dye; EU warning label
+INS 122,carmoisine,E122|azorubine,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,Azo dye; EU warning label
+INS 124,ponceau 4R,E124|cochineal red A,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,Azo dye; EU warning label
+INS 129,allura red AC,E129|allura red|red 40,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,Azo dye; EU warning label
+INS 127,erythrosine,E127|red 3,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,Thyroid effects at high doses
+INS 133,brilliant blue FCF,E133|brilliant blue|blue 1,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,Synthetic colour
+INS 150c,ammonia caramel,E150c,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,4-MEI by-product concern
+INS 150d,sulphite ammonia caramel,E150d|caramel colour iv,moderate,https://www.efsa.europa.eu/en/topics/topic/food-colours,4-MEI by-product concern
+INS 951,aspartame,E951,moderate,https://www.iarc.who.int/news-events/aspartame-hazard-and-risk-assessment-results-released/,IARC Group 2B (2023); JECFA ADI unchanged
+INS 950,acesulfame potassium,E950|acesulfame k|acesulfame,moderate,https://www.efsa.europa.eu/en/topics/topic/sweeteners,Artificial sweetener
+INS 955,sucralose,E955,moderate,https://www.efsa.europa.eu/en/topics/topic/sweeteners,Artificial sweetener
+INS 954,saccharin,E954|sodium saccharin,moderate,https://www.efsa.europa.eu/en/topics/topic/sweeteners,Artificial sweetener
+INS 621,monosodium glutamate,E621|MSG|monosodium l-glutamate,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Flavour enhancer; EFSA 2017 group ADI
+INS 627,disodium guanylate,E627,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Flavour enhancer
+INS 631,disodium inosinate,E631,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Flavour enhancer
+INS 635,disodium 5'-ribonucleotides,E635|disodium ribonucleotides,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Flavour enhancer
+INS 211,sodium benzoate,E211,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Can form benzene with ascorbic acid
+INS 220,sulphur dioxide,E220|sulfur dioxide,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Sulphite sensitivity
+INS 223,sodium metabisulphite,E223|sodium metabisulfite,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Sulphite sensitivity
+INS 321,butylated hydroxytoluene,E321|BHT,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Synthetic antioxidant
+INS 319,tertiary butylhydroquinone,E319|TBHQ,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Synthetic antioxidant
+INS 407,carrageenan,E407,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Gut-health questions under review
+INS 433,polysorbate 80,E433,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Emulsifier; gut microbiome research
+INS 466,sodium carboxymethyl cellulose,E466|carboxymethyl cellulose|CMC,moderate,https://www.efsa.europa.eu/en/topics/topic/food-additives,Emulsifier; gut microbiome research
+X-ARTIFICIAL-FLAVOUR,artificial flavour,artificial flavouring|artificial flavor|artificial flavoring|artificial flavouring substances|nature identical flavouring|nature identical flavouring substances|nature identical flavour,moderate,https://www.fssai.gov.in/,Marker of ultra-processing; FSSAI requires declaration of added flavours
+INS 322,lecithin,E322|soy lecithin|soya lecithin|sunflower lecithin|lecithins,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 330,citric acid,E330,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 500,sodium carbonates,E500|sodium bicarbonate|sodium hydrogen carbonate|baking soda,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 503,ammonium carbonates,E503|ammonium bicarbonate|ammonium hydrogen carbonate,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 501,potassium carbonates,E501,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 471,mono- and diglycerides of fatty acids,E471|mono and diglycerides,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 412,guar gum,E412,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 415,xanthan gum,E415,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 440,pectin,E440|pectins,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 300,ascorbic acid,E300,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,Vitamin C
+INS 296,malic acid,E296,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 270,lactic acid,E270,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 260,acetic acid,E260,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 334,tartaric acid,E334,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 290,carbon dioxide,E290,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 160a,beta-carotene,E160a|carotenes,low,https://www.efsa.europa.eu/en/topics/topic/food-colours,
+INS 160b,annatto,E160b|bixin|norbixin,low,https://www.efsa.europa.eu/en/topics/topic/food-colours,
+INS 150a,plain caramel,E150a|caramel colour i,low,https://www.efsa.europa.eu/en/topics/topic/food-colours,
+INS 100,curcumin,E100,low,https://www.efsa.europa.eu/en/topics/topic/food-colours,From turmeric
+INS 202,potassium sorbate,E202,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 200,sorbic acid,E200,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 450,diphosphates,E450|disodium diphosphate|sodium acid pyrophosphate,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 452,polyphosphates,E452,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 341,calcium phosphates,E341,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 327,calcium lactate,E327,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 1422,acetylated distarch adipate,E1422,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,Modified starch
+INS 1442,hydroxypropyl distarch phosphate,E1442,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,Modified starch
+INS 960,steviol glycosides,E960|stevia|steviol glycoside,low,https://www.efsa.europa.eu/en/topics/topic/sweeteners,Plant-derived sweetener
+INS 476,polyglycerol polyricinoleate,E476|PGPR,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 492,sorbitan tristearate,E492,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 420,sorbitol,E420,low,https://www.efsa.europa.eu/en/topics/topic/sweeteners,Polyol; laxative in large amounts
+INS 965,maltitol,E965,low,https://www.efsa.europa.eu/en/topics/topic/sweeteners,Polyol
+INS 551,silicon dioxide,E551|silica,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,Anti-caking agent
+INS 170,calcium carbonate,E170,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 307,alpha-tocopherol,E307|vitamin e|tocopherol,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,Antioxidant (vitamin E)
+INS 306,mixed tocopherols,E306|tocopherol-rich extract,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,
+INS 1100,amylases,E1100|amylase,low,https://www.efsa.europa.eu/en/topics/topic/food-additives,Enzyme

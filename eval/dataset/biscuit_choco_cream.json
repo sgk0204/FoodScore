@@ -1,0 +1,24 @@
+{
+  "id": "biscuit_choco_cream",
+  "category": "biscuit",
+  "notes": "Synthetic reference case mirroring guide §6.6. Replace images with real photos.",
+  "fake_fixture": "chocolate_biscuit",
+  "images": {
+    "front": "images/biscuit_choco_cream_front.jpg",
+    "nutrition": "images/biscuit_choco_cream_nutrition.jpg",
+    "ingredients": "images/biscuit_choco_cream_ingredients.jpg"
+  },
+  "expected": {
+    "is_food_label": true,
+    "basis": "per_100g",
+    "nutrition": {
+      "energy_kcal": 480, "sugars_g": 30, "added_sugars_g": 28, "carbs_g": 64, "fat_g": 22,
+      "sat_fat_g": 10, "trans_fat_g": 0.1, "salt_g": 0.6, "fibre_g": 2, "protein_g": 6
+    },
+    "ingredients": ["Whole wheat flour", "Palm oil", "Cocoa solids", "Sugar", "Emulsifier (INS 322)",
+                    "Raising agent (INS 503)", "Artificial flavour (chocolate)"],
+    "additive_codes": ["INS 322", "INS 503"],
+    "score": 39,
+    "band": "BAD"
+  }
+}

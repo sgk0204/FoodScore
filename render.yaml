@@ -1,0 +1,94 @@
+# Render Blueprint — backend + Postgres + Redis in one click.
+# Render dashboard → New → Blueprint → pick this repo. Secrets marked `sync: false` are asked for
+# during setup. Full walkthrough: docs/deployment.md
+#
+# Default ("starter" mode): ONE web service runs the API *and* the scan pipeline in-process
+# (JOB_MODE=inline). Images live on the instance's disk for the few seconds a scan needs them
+# (they are deleted right after extraction). Cheapest setup that works.
+#
+# Upgrade to the guide's full architecture (separate worker, object storage): see the commented
+# block at the bottom and docs/deployment.md → "Full architecture".
+
+services:
+  - type: web
+    name: foodscore-api
+    runtime: docker
+    region: singapore
+    plan: free
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass # deploy main only after GitHub CI passes
+    buildFilter:
+      paths: ["backend/**"]
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL # Render's postgresql:// URL is normalised to asyncpg by the app
+        fromDatabase:
+          name: foodscore-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: foodscore-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JOB_MODE
+        value: inline
+      - key: STORAGE_BACKEND
+        value: local
+      - key: LLM_PROVIDER
+        value: claude
+      - key: CLAUDE_MODEL
+        value: claude-opus-5-5
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CORS_ORIGINS # your Vercel URL, e.g. https://foodscore.vercel.app
+        sync: false
+      - key: USER_DAILY_SCAN_QUOTA
+        value: "20"
+      - key: GUEST_DAILY_SCAN_QUOTA
+        value: "3"
+      - key: GLOBAL_DAILY_SCAN_BUDGET
+        value: "200"
+      - key: SENTRY_DSN
+        sync: false
+
+  - type: keyvalue
+    name: foodscore-redis
+    region: singapore
+    plan: free
+    ipAllowList: [] # internal network only
+    maxmemoryPolicy: noeviction # never silently drop queued jobs or rate-limit counters
+
+databases:
+  - name: foodscore-db
+    region: singapore
+    plan: free # free Postgres expires after 30 days on Render — upgrade to basic-256mb to keep data
+    databaseName: foodscore
+    user: foodscore
+
+# --- Full architecture (uncomment, then set JOB_MODE=arq and STORAGE_BACKEND=s3 on the API) ---
+# A separate worker cannot read the API's local disk, so it needs S3-compatible storage
+# (Cloudflare R2 recommended: create a bucket with a 1-day lifecycle rule).
+#
+#  - type: worker
+#    name: foodscore-worker
+#    runtime: docker
+#    region: singapore
+#    plan: starter
+#    dockerContext: ./backend
+#    dockerfilePath: ./backend/Dockerfile
+#    dockerCommand: arq app.workers.settings.WorkerSettings
+#    autoDeployTrigger: checksPass
+#    envVars:  # same values as the API, plus:
+#      - key: S3_ENDPOINT_URL   # https://<account-id>.r2.cloudflarestorage.com
+#        sync: false
+#      - key: S3_BUCKET
+#        value: foodscore-images
+#      - key: S3_ACCESS_KEY_ID
+#        sync: false
+#      - key: S3_SECRET_ACCESS_KEY
+#        sync: false

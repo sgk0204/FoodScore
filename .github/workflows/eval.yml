@@ -1,0 +1,40 @@
+# Nightly / on-demand extraction eval against the REAL provider (costs money — guide §7.6, §12).
+# The labelled photo set lives outside git (it may contain personal data); this job downloads it.
+#
+# Secrets: ANTHROPIC_API_KEY (and/or GEMINI_API_KEY), EVAL_DATASET_URL (zip of eval/dataset/images).
+name: Eval
+
+on:
+  schedule:
+    - cron: "30 20 * * *" # 02:00 IST
+  workflow_dispatch:
+    inputs:
+      provider: { description: "claude | gemini", default: claude }
+      prompt: { description: "prompt version", default: v1 }
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    if: ${{ vars.EVAL_ENABLED == 'true' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip, cache-dependency-path: backend/pyproject.toml }
+      - run: pip install -e "backend[dev]"
+      - name: Fetch labelled photos
+        run: curl -fsSL "${{ secrets.EVAL_DATASET_URL }}" -o images.zip && unzip -q images.zip -d eval/dataset/images
+      - name: Run eval
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DATABASE_URL: sqlite+aiosqlite:///:memory:
+          REDIS_URL: redis://localhost:6379/0
+          JWT_SECRET: eval-only-secret-not-used-for-anything-real
+          LLM_PROVIDER: ${{ inputs.provider || 'claude' }}
+        run: python -m eval.run --provider "${{ inputs.provider || 'claude' }}" --prompt "${{ inputs.prompt || 'v1' }}" --min-exact 0.9
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: eval-results, path: eval/results.md }

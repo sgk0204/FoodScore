@@ -1,0 +1,88 @@
+{
+  "is_food_label": true,
+  "image_roles": [
+    "front",
+    "nutrition",
+    "ingredients"
+  ],
+  "product_name": "Cola Classic",
+  "brand": "Fizz",
+  "category_guess": "beverage",
+  "basis": "per_100ml",
+  "serving_size_g": null,
+  "energy": {
+    "raw": "42 kcal",
+    "value": 42,
+    "unit": "kcal",
+    "confidence": 0.95
+  },
+  "sugars": {
+    "raw": "10.6 g",
+    "value": 10.6,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "added_sugars": {
+    "raw": "10.6 g",
+    "value": 10.6,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "carbohydrates": {
+    "raw": "10.6 g",
+    "value": 10.6,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "total_fat": {
+    "raw": "Nil",
+    "value": 0,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "saturated_fat": {
+    "raw": "Nil",
+    "value": 0,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "trans_fat": {
+    "raw": "Nil",
+    "value": 0,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "sodium_or_salt": {
+    "raw": "10 mg",
+    "value": 10,
+    "unit": "mg",
+    "confidence": 0.95
+  },
+  "fibre": {
+    "raw": null,
+    "value": null,
+    "unit": null,
+    "confidence": 0.0
+  },
+  "protein": {
+    "raw": "0 g",
+    "value": 0,
+    "unit": "g",
+    "confidence": 0.95
+  },
+  "salt_label": "sodium",
+  "ingredients": [
+    "Carbonated water",
+    "Sugar",
+    "Colour (INS 150d)",
+    "Acidity regulator (INS 338)",
+    "Natural flavouring substances",
+    "Caffeine"
+  ],
+  "additive_codes": [
+    "INS 150d",
+    "INS 338"
+  ],
+  "legibility_issues": [],
+  "multiple_products": false
+}

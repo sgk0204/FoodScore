@@ -1,0 +1,23 @@
+{
+  "id": "noodles_masala",
+  "category": "noodles",
+  "notes": "Per-serving label (70 g) with sodium in mg — tests basis and unit conversion.",
+  "fake_fixture": "masala_noodles",
+  "images": {
+    "front": "images/noodles_masala_front.jpg",
+    "nutrition": "images/noodles_masala_nutrition.jpg",
+    "ingredients": "images/noodles_masala_ingredients.jpg"
+  },
+  "expected": {
+    "is_food_label": true,
+    "basis": "per_serving",
+    "nutrition": {
+      "energy_kcal": 447.143, "sugars_g": 2.0, "added_sugars_g": null, "carbs_g": 60.0, "fat_g": 18.571,
+      "sat_fat_g": 8.857, "trans_fat_g": 0.071, "salt_g": 3.071, "fibre_g": 2.571, "protein_g": 9.286
+    },
+    "ingredients": ["Noodles > refined wheat flour (maida)", "Noodles > palm oil", "Noodles > salt",
+                    "Noodles > thickener (INS 508)", "Noodles > humectant (INS 451)", "Tastemaker > mixed spices",
+                    "Tastemaker > sugar", "Tastemaker > flavour enhancer (INS 627, INS 631)",
+                    "Tastemaker > hydrolysed vegetable protein"]
+  }
+}
