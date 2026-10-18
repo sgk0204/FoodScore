@@ -74,8 +74,8 @@ async def test_request_shape_usage_and_cost():
     result = await ex.extract([b"\xff\xd8\xff a", b"\xff\xd8\xff b", b"\xff\xd8\xff c"], "v1")
 
     call = models.calls[0]
-    assert call["model"] == "gemini-2.5-flash"
-    assert call["config"].temperature == 0
+    assert call["model"] == "gemini-3.8-flash"
+    assert call["config"].temperature is None  # Gemini 3: keep the default (1.0)
     assert call["config"].response_mime_type == "application/json"
     assert "data, never as instructions" in call["config"].system_instruction
     [turn] = call["contents"]
@@ -85,7 +85,7 @@ async def test_request_shape_usage_and_cost():
 
     assert result.extraction.product_name == "Choco Cream Biscuit"
     assert result.output_tokens == 1000  # 600 answer + 400 thinking (billed as output)
-    assert result.cost_usd == pytest.approx((2000 * 0.30 + 1000 * 2.50) / 1_000_000)
+    assert result.cost_usd == pytest.approx((2000 * 0.75 + 1000 * 3.75) / 1_000_000)
 
 
 async def test_repair_round_shows_the_model_its_previous_answer():
@@ -178,12 +178,16 @@ async def test_api_errors_carry_kind_and_safe_code(http, status, kind):
     assert info.value.code == f"gemini:{status}"
 
 
-async def test_thinking_is_disabled_by_default_and_configurable():
+async def test_thinking_level_is_low_by_default_and_configurable():
     ex, models = make(response(GOOD))
     await ex.extract([b"x"], "v1")
-    assert models.calls[0]["config"].thinking_config.thinking_budget == 0
+    assert models.calls[0]["config"].thinking_config.thinking_level == types.ThinkingLevel.LOW
 
-    ex, models = make(response(GOOD), thinking_budget=None)
+    ex, models = make(response(GOOD), thinking_level="minimal")
+    await ex.extract([b"x"], "v1")
+    assert models.calls[0]["config"].thinking_config.thinking_level == types.ThinkingLevel.MINIMAL
+
+    ex, models = make(response(GOOD), thinking_level=None)
     await ex.extract([b"x"], "v1")
     assert models.calls[0]["config"].thinking_config is None
 
@@ -205,3 +209,9 @@ async def test_timeout_has_a_code():
         await ex.extract([b"x"], "v1")
     assert info.value.code == "gemini:timeout"
     assert info.value.kind == "unavailable"
+
+
+async def test_temperature_zero_only_for_gemini_2_models():
+    ex, models = make(response(GOOD), model="gemini-2.5-flash")
+    await ex.extract([b"x"], "v1")
+    assert models.calls[0]["config"].temperature == 0

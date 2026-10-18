@@ -2,7 +2,7 @@
 
     cd backend
     python scripts/check_provider.py              # uses LLM_PROVIDER from .env / environment
-    python scripts/check_provider.py --provider gemini --model gemini-2.5-flash
+    python scripts/check_provider.py --provider gemini --model gemini-3.8-flash
 
 Reads the API key from the environment or a `.env` file (repo root or backend/) — the key is
 never printed. Draws three label photos with known values (the guide's chocolate cream

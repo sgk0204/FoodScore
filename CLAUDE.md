@@ -133,7 +133,10 @@ reaper (cron, every minute): PROCESSING > 2 min → FAILED; NEEDS_REVIEW > 24 h 
 
 `app/services/extraction/gemini.py` (google-genai SDK, async `client.aio.models.generate_content`):
 one `Content(role="user")` with three JPEG parts + the instruction; `system_instruction`;
-`temperature=0`; `response_json_schema=inline_refs(strict_json_schema(Extraction))` (no
+default model `gemini-3.8-flash` (`gemini-2.5-flash` returns NOT_FOUND for new keys);
+`thinking_level="low"` (Gemini 3 can't disable thinking; use `thinking_level`, not the
+2.5-era `thinking_budget`); temperature left at the default on Gemini 3 (Google: < 1.0 can
+loop) and 0 only on 2.x; `response_json_schema=inline_refs(strict_json_schema(Extraction))` (no
 `$defs` — Gemini supports a JSON Schema subset). Empty answers are classified by
 `prompt_feedback.block_reason` / `finish_reason` (SAFETY etc. → permanent, MAX_TOKENS →
 retryable), never treated as schema errors. Thinking tokens are billed as output and counted.
